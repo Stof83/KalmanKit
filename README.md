@@ -83,7 +83,7 @@ let package = Package(
 ### 1. Initialization
 
 ```swift
-let filter = await KalmanFilter(location)
+let filter = KalmanFilter(location)
 ```
 
 Pass an initial `CLLocation` object to bootstrap the filter.
@@ -91,7 +91,7 @@ Pass an initial `CLLocation` object to bootstrap the filter.
 ### 2. Processing New Location Updates
 
 ```swift
-let correctedLocation = await filter.process(newLocation)
+let correctedLocation = filter.process(newLocation)
 ```
 
 Pass each new GPS reading to the filter. The return value is a noise-reduced `CLLocation`.
@@ -99,7 +99,7 @@ Pass each new GPS reading to the filter. The return value is a noise-reduced `CL
 ### 3. Resetting the Filter
 
 ```swift
-await filter.reset(newStartlocation)
+filter.reset(newStartlocation)
 ```
 
 Useful for resetting state if tracking resumes after a pause or signal loss.
@@ -135,21 +135,19 @@ class LocationHandler: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.first else { return }
 
-        Task {
-            if kalmanFilter == nil {
-                kalmanFilter = await KalmanFilter(currentLocation)
-                return
-            }
+        if kalmanFilter == nil {
+            kalmanFilter = KalmanFilter(currentLocation)
+            return
+        }
 
-            if shouldResetFilter {
-                await kalmanFilter?.reset(currentLocation)
-                shouldResetFilter = false
-                return
-            }
+        if shouldResetFilter {
+            kalmanFilter?.reset(currentLocation)
+            shouldResetFilter = false
+            return
+        }
 
-            if let smoothedLocation = await kalmanFilter?.process(currentLocation) {
-                print("Smoothed Coordinate: \(smoothedLocation.coordinate)")
-            }
+        if let smoothedLocation = kalmanFilter?.process(currentLocation) {
+            print("Smoothed Coordinate: \(smoothedLocation.coordinate)")
         }
     }
 }
