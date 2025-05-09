@@ -113,18 +113,6 @@ class MatrixObject {
         return result
     }
     
-    /// Diagonal Matrix Function
-    /// =========================
-    /// Returns result MatrixObject of diagonal operation
-    ///
-    /// - returns: diagonal MatrixObject object
-    public func diagonal() -> MatrixObject? {
-        let result = MatrixObject(rows: self.rows, columns: self.columns)
-        result.matrix = Surge.diagonal(self.matrix)
-        
-        return result
-    }
-    
     /// Inverse Matrix Function
     /// =======================
     /// Returns inverse matrix object
